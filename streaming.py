@@ -44,7 +44,7 @@ def load_model_from_drive():
         with st.spinner("Downloading model... this may take awhile! \n Don't stop it!"):
             import gdown
             output="models/asl_alphabet_9575.h5"
-            url = 'https://drive.google.com/uc?id=1mmw9i0zPuTxWWaXf1t2X7zjL0riQCjgy'
+            url = 'https://drive.google.com/uc?id=1-AhrgzAHbGwpvQdZ5zA1lintqLkLX_mP'
             gdown.download(url,output, quiet=False)
     
     model = load_model(f_checkpoint)
