@@ -127,7 +127,6 @@ streamlit-webrtc==0.20.0
 tensorboard==2.5.0
 tensorboard-data-server==0.6.1
 tensorboard-plugin-wit==1.8.0
-tensorflow==2.4.1
 https://storage.googleapis.com/tensorflow/linux/cpu/tensorflow-2.4.1-cp27-none-linux_x86_64.whl
 tensorflow-estimator==2.4.0
 termcolor==1.1.0
