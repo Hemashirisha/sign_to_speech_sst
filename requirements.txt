@@ -9,5 +9,6 @@ spellchecker==0.4
 streamlit-bokeh-events==0.1.2
 streamlit-webrtc==0.20.0
 tensorflow-cpu==2.4.1
+gdown==3.13.0
 
 
