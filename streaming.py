@@ -44,8 +44,7 @@ def load_model_from_drive():
         with st.spinner("Downloading model... this may take awhile! \n Don't stop it!"):
             import gdown
             url = 'https://drive.google.com/uc?id=1mmw9i0zPuTxWWaXf1t2X7zjL0riQCjgy'
-            output = 'spam.txt'
-            gdown.download(url, output, quiet=False)
+            gdown.download(url,f_checkpoint, quiet=False)
     
     model = load_model(f_checkpoint)
     return model
