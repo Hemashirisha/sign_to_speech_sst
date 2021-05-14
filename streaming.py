@@ -225,6 +225,7 @@ if draw_bounds:
                 }
             }
             recognition.start();
+            this.addclass='active'
             """))
 
         result = streamlit_bokeh_events(
