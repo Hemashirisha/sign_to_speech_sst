@@ -7,8 +7,7 @@ from io import BytesIO
 from pathlib import Path
 from string import ascii_uppercase
 from typing import List
-
-
+#from fer import FER
 import av
 import cv2
 import numpy as np
@@ -43,11 +42,12 @@ def load_model_from_drive():
     if not f_checkpoint.exists():
         with st.spinner("Downloading model... this may take awhile! \n Don't stop it!"):
             import gdown
-            output="models/asl_alphabet_9575.h5"
-            url = 'https://drive.google.com/uc?id=1-AhrgzAHbGwpvQdZ5zA1lintqLkLX_mP'
-            gdown.download(url,output, quiet=False)
+            url = 'https://drive.google.com/uc?id=1mmw9i0zPuTxWWaXf1t2X7zjL0riQCjgy'
+            url="https://drive.google.com/uc?id=1-AhrgzAHbGwpvQdZ5zA1lintqLkLX_mP"
+            output = 'models/asl_alphabet_9575.h5'
+            gdown.download(url, output, quiet=False)
     
-    model = load_model(f_checkpoint)
+    model = load_model("models/asl_alphabet_9575.h5")
     return model
 
 data_generator = ImageDataGenerator(samplewise_center=True, samplewise_std_normalization=True)
@@ -80,7 +80,7 @@ class DrawBounds(VideoTransformerBase):
         cv2.rectangle(img, (self.x_, 0), (CROP_SIZE+self.x_, CROP_SIZE), (0, 255, 0), 3)
         return img
 
-
+  
 class VideoTransformer(VideoTransformerBase):
     frame_lock: threading.Lock
     x_:int
@@ -94,30 +94,11 @@ class VideoTransformer(VideoTransformerBase):
         self.current_symbol=""
         self.sentence=""
         self.predicted_class=""
-        
+    
     def predict(self):
-        # global word,current_symbol,sentence,classes_dict,classes
-        
         global classes
         self.current_symbol=self.predicted_class
         self.classes_dict[self.current_symbol]+=1
-        #print(current_symbol)
-        # if(self.current_symbol=='nothing' and self.classes_dict[self.current_symbol]>50):
-        #     print("Nothing")
-        #     word=spell.correction(word)
-        #     if(len(self.sentence)==0):
-        #         return
-        #     mp3_fp=BytesIO()
-        #     tts = gTTS(self.word)
-        #     tts.write_to_fp(mp3_fp)
-        #     for i in classes:
-        #         self.classes_dict[i]=0
-        #     if(len(self.sentence)>0):
-        #         self.sentence+=" "
-            
-        #     self.sentence+=self.word
-        #     self.word=""
-        #     return
         if(self.classes_dict[self.current_symbol]>50):
             for i in classes:
                 if(i==self.current_symbol):
@@ -133,7 +114,6 @@ class VideoTransformer(VideoTransformerBase):
                 if(len(self.sentence)>0):
                     self.sentence+=" "
                 self.sentence+=self.word
-                #st.markdown(self.sentence)
                 self.word=""
             else:
                 for i in classes:
@@ -146,7 +126,7 @@ class VideoTransformer(VideoTransformerBase):
     # Target area where the hand gestures should be.
         img=frame.to_ndarray(format="bgr24")
         cv2.rectangle(img, (self.x_, 0), (CROP_SIZE+self.x_, CROP_SIZE), (0, 255, 0), 3)
-        #cv2.rectangle(img, (100, 5), (100, 400), (0, 200, 0), 3)
+        
         
         
         # Preprocessing the frame before input to the model.
@@ -189,6 +169,8 @@ if draw_bounds:
             tts = gTTS(i)
             tts.write_to_fp(mp3_fp)   
             st.audio(mp3_fp)
+            
+
 
     col1, col2 = st.beta_columns(2)
 
@@ -212,13 +194,14 @@ if draw_bounds:
                 }
             }
             recognition.start();
+            this.addclass='active'
             """))
 
         result = streamlit_bokeh_events(
             stt_button,
             events="GET_TEXT",
             key="listen",
-            refresh_on_update=False,
+            refresh_on_update=True,
             override_height=75,
             debounce_time=0)
 
@@ -229,6 +212,7 @@ if draw_bounds:
     with col1:
         st.title("Sign to speech")
         st_audio=st.empty()
+        words=st.empty()  
         webrtc_ctx = webrtc_streamer(
             key="Hemashirisha123",
             mode=WebRtcMode.SENDRECV,
@@ -238,11 +222,16 @@ if draw_bounds:
         )
      
         if webrtc_ctx.video_transformer:
-            #slider_value=update_slider()
+            words.markdown(webrtc_ctx.video_transformer.word)
             webrtc_ctx.video_transformer.x_=slider_value["slide"]
             if st.button('Speak'):
+                if(len(webrtc_ctx.video_transformer.word)>0):
+                    webrtc_ctx.video_transformer.sentence+=webrtc_ctx.video_transformer.word
                 webrtc_ctx.video_transformer.sentence += ""
                 sen = webrtc_ctx.video_transformer.sentence
+                webrtc_ctx.video_transformer.sentence=""
+                if(len(sen)==0):
+                    sen="No sentence to speak"
                 st.markdown(sen)
                 mp4 = BytesIO()
                 tts = gTTS(sen)
