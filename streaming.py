@@ -16,6 +16,7 @@ import pydub
 import streamlit as st
 from bokeh.models import CustomJS
 from bokeh.models.widgets import Button
+from bokeh.models.widgets import (Div,)
 from gtts import gTTS
 from streamlit_bokeh_events import streamlit_bokeh_events
 from streamlit_webrtc import (ClientSettings,
@@ -23,6 +24,8 @@ from streamlit_webrtc import (ClientSettings,
                               webrtc_streamer)
 from tensorflow.keras.models import load_model
 from tensorflow.keras.preprocessing.image import ImageDataGenerator
+
+
 st.set_page_config(layout="wide")
 HERE = Path(__file__).parent
 
@@ -195,6 +198,16 @@ if draw_bounds:
     with col2:
         st.title("Speech to text")
         stt_button = Button(label="Speak", width=100)
+        # template=("""
+        #     <div class='content'>
+        #     <div class='buttons'> {stt_button} </div>
+        #     </div>
+        #     """)
+       
+        # bu = template.format(stt_button = stt_button)
+        # div = Div(text=bu, height=300)
+
+        
         stt_button.js_on_event("button_click", CustomJS(code="""
             var recognition = new webkitSpeechRecognition();
             recognition.continuous = true;
@@ -219,7 +232,7 @@ if draw_bounds:
             events="GET_TEXT",
             key="listen",
             refresh_on_update=False,
-            override_height=75,
+            override_height=110,
             debounce_time=0)
 
         if result:
