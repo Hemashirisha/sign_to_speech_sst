@@ -94,6 +94,7 @@ class VideoTransformer(VideoTransformerBase):
         self.current_symbol=""
         self.sentence=""
         self.predicted_class=""
+        self.next_sentence=0
     
     def predict(self):
         global classes
@@ -109,6 +110,7 @@ class VideoTransformer(VideoTransformerBase):
                         return
         
             if(self.current_symbol=='nothing'):
+                # if(len(self.sentence)==0 or (len(self.sentence)>0 and self.sentence[len(self.sentence)-1]!=".")):
                 for i in classes:
                     self.classes_dict[i]=0
                 if(len(self.sentence)>0):
@@ -225,9 +227,11 @@ if draw_bounds:
             words.markdown(webrtc_ctx.video_transformer.word)
             webrtc_ctx.video_transformer.x_=slider_value["slide"]
             if st.button('Speak'):
+                webrtc_ctx.video_transformer.next_sentence=1
                 if(len(webrtc_ctx.video_transformer.word)>0):
-                    webrtc_ctx.video_transformer.sentence+=webrtc_ctx.video_transformer.word
-                webrtc_ctx.video_transformer.sentence += ""
+                    webrtc_ctx.video_transformer.sentence+=(" "+webrtc_ctx.video_transformer.word)
+                webrtc_ctx.video_transformer.sentence += "."
+                webrtc_ctx.video_transformer.word=""
                 sen = webrtc_ctx.video_transformer.sentence
                 webrtc_ctx.video_transformer.sentence=""
                 if(len(sen)==0):
@@ -237,6 +241,7 @@ if draw_bounds:
                 tts = gTTS(sen)
                 tts.write_to_fp(mp4)
                 st.audio(mp4)
+                webrtc_ctx.video_transformer.next_sentence=0
             
 
   
