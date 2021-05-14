@@ -232,7 +232,7 @@ if draw_bounds:
             events="GET_TEXT",
             key="listen",
             refresh_on_update=False,
-            override_height=80,
+            override_height=110,
             debounce_time=0)
 
         if result:
